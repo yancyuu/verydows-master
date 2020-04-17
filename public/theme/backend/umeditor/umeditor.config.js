@@ -19,7 +19,7 @@
      * 因此，UEditor提供了针对不同页面的编辑器可单独配置的根路径，具体来说，在需要实例化编辑器的页面最顶部写上如下代码即可。当然，需要令此处的URL等于对应的配置。
      * window.UMEDITOR_HOME_URL = "/xxxx/xxxx/";
      */
-     var URL = window.UMEDITOR_HOME_URL || (function(){
+    var URL = window.UMEDITOR_HOME_URL || (function () {
 
         function PathStack() {
 
@@ -33,83 +33,83 @@
             this.path = this.documentURL;
             this.stack = [];
 
-            this.push( this.documentURL );
+            this.push(this.documentURL);
 
         }
 
-        PathStack.isParentPath = function( path ){
+        PathStack.isParentPath = function (path) {
             return path === '..';
         };
 
-        PathStack.hasProtocol = function( path ){
-            return !!PathStack.getProtocol( path );
+        PathStack.hasProtocol = function (path) {
+            return !!PathStack.getProtocol(path);
         };
 
-        PathStack.getProtocol = function( path ){
+        PathStack.getProtocol = function (path) {
 
-            var protocol = /^[^:]*:\/*/.exec( path );
+            var protocol = /^[^:]*:\/*/.exec(path);
 
             return protocol ? protocol[0] : null;
 
         };
 
         PathStack.prototype = {
-            push: function( path ){
+            push: function (path) {
 
                 this.path = path;
 
-                update.call( this );
-                parse.call( this );
+                update.call(this);
+                parse.call(this);
 
                 return this;
 
             },
-            getPath: function(){
+            getPath: function () {
                 return this + "";
             },
-            toString: function(){
-                return this.protocol + ( this.stack.concat( [''] ) ).join( this.separator );
+            toString: function () {
+                return this.protocol + (this.stack.concat([''])).join(this.separator);
             }
         };
 
         function update() {
 
-            var protocol = PathStack.getProtocol( this.path || '' );
+            var protocol = PathStack.getProtocol(this.path || '');
 
-            if( protocol ) {
+            if (protocol) {
 
                 //根协议
                 this.protocol = protocol;
 
                 //local
-                this.localSeparator = /\\|\//.exec( this.path.replace( protocol, '' ) )[0];
+                this.localSeparator = /\\|\//.exec(this.path.replace(protocol, ''))[0];
 
                 this.stack = [];
             } else {
-                protocol = /\\|\//.exec( this.path );
+                protocol = /\\|\//.exec(this.path);
                 protocol && (this.localSeparator = protocol[0]);
             }
 
         }
 
-        function parse(){
+        function parse() {
 
-            var parsedStack = this.path.replace( this.currentDirPattern, '' );
+            var parsedStack = this.path.replace(this.currentDirPattern, '');
 
-            if( PathStack.hasProtocol( this.path ) ) {
-                parsedStack = parsedStack.replace( this.protocol , '');
+            if (PathStack.hasProtocol(this.path)) {
+                parsedStack = parsedStack.replace(this.protocol, '');
             }
 
-            parsedStack = parsedStack.split( this.localSeparator );
+            parsedStack = parsedStack.split(this.localSeparator);
             parsedStack.length = parsedStack.length - 1;
 
-            for(var i= 0,tempPath,l=parsedStack.length,root = this.stack;i<l;i++){
+            for (var i = 0, tempPath, l = parsedStack.length, root = this.stack; i < l; i++) {
                 tempPath = parsedStack[i];
-                if(tempPath){
-                    if( PathStack.isParentPath( tempPath ) ) {
+                if (tempPath) {
+                    if (PathStack.isParentPath(tempPath)) {
                         root.pop();
                     } else {
-                        root.push( tempPath );
+                        root.push(tempPath);
                     }
                 }
             }
@@ -117,32 +117,32 @@
 
         var currentPath = document.getElementsByTagName('script');
 
-        currentPath = currentPath[ currentPath.length -1 ].src;
+        currentPath = currentPath[currentPath.length - 1].src;
 
-        return new PathStack().push( currentPath ) + "";
+        return new PathStack().push(currentPath) + "";
     })();
-	
-	//定义图片上传提交地址和图片读取路径
-	//var UPLOAD_REQUEST = "index.php?c=umeditor&a=upload_img" || window.UMEDITOR_UPLOAD_REQUEST;
-	//var IMG_PATH = "../upload/images/" || window.UMEDITOR_IMG_PATH;
+
+    //定义图片上传提交地址和图片读取路径
+    //var UPLOAD_REQUEST = "index.php?c=umeditor&a=upload_img" || window.UMEDITOR_UPLOAD_REQUEST;
+    //var IMG_PATH = "../upload/images/" || window.UMEDITOR_IMG_PATH;
     /**
      * 配置项主体。注意，此处所有涉及到路径的配置别遗漏URL变量。
      */
     window.UMEDITOR_CONFIG = {
 
         //为编辑器实例添加一个路径，这个不能被注释
-        UMEDITOR_HOME_URL : URL
+        UMEDITOR_HOME_URL: URL
 
         //图片上传配置区
-        ,imageUrl: ''   	  //,imageUrl:URL+"php/imageUp.php" //图片上传提交地址
-        ,imagePath: ''            //,imagePath:URL + "php/"    //图片修正地址，引用了fixedImagePath,如有特殊需求，可自行配置
-        ,imageFieldName:"upfile"  //图片数据的key,若此处修改，需要在后台对应文件修改对应参数
+        , imageUrl: ''   	  //,imageUrl:URL+"php/imageUp.php" //图片上传提交地址
+        , imagePath: ''            //,imagePath:URL + "php/"    //图片修正地址，引用了fixedImagePath,如有特殊需求，可自行配置
+        , imageFieldName: "upfile"  //图片数据的key,若此处修改，需要在后台对应文件修改对应参数
 
 
         //工具栏上的所有的功能按钮和下拉框，可以在new编辑器的实例时选择自己需要的从新定义
-        ,toolbar:[
+        , toolbar: [
             'source | undo redo | bold italic underline strikethrough | superscript subscript | forecolor backcolor | removeformat |',
-            'insertorderedlist insertunorderedlist | selectall cleardoc paragraph | fontfamily fontsize' ,
+            'insertorderedlist insertunorderedlist | selectall cleardoc paragraph | fontfamily fontsize',
             '| justifyleft justifycenter justifyright justifyjustify |',
             'link unlink | image video  | map',
             '| horizontal print preview fullscreen', 'drafts'
@@ -160,7 +160,6 @@
         //现有如下皮肤:default
         //,theme:'default'
         //,themePath:URL +"themes/"
-
 
 
         //针对getAllHtml方法，会在对应的head标签中增加该编码设置。
@@ -190,7 +189,7 @@
 
         //如果自定义，最好给p标签如下的行高，要不输入中文时，会有跳动感
         //注意这里添加的样式，最好放在.edui-editor-body .edui-body-container这两个的下边，防止跟页面上css冲突
-        ,initialStyle:'.edui-editor-body .edui-body-container p{font-size:12px;}'
+        , initialStyle: '.edui-editor-body .edui-body-container p{font-size:12px;}'
 
         //,autoSyncData:true //自动同步编辑器要提交的数据
 
@@ -206,7 +205,7 @@
 
         //fontsize
         //字号
-        ,'fontsize':[12, 14, 16, 18, 24, 32, 48] //设置后必须对应设置JS里fontsize
+        , 'fontsize': [12, 14, 16, 18, 24, 32, 48] //设置后必须对应设置JS里fontsize
 
         //paragraph
         //段落格式 值留空时支持多语言自动识别，若配置，则以配置值为准
